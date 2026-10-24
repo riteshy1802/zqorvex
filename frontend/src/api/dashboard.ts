@@ -1,6 +1,12 @@
 import { DashboardResponse, HealthResponse } from "../types/dashboard";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000").replace(/\/$/, "");
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL !== undefined
+    ? import.meta.env.VITE_API_BASE_URL
+    : import.meta.env.PROD
+    ? ""
+    : "http://localhost:8000"
+).replace(/\/$/, "");
 
 /**
  * Fetch the complete dashboard payload for the specified January 2026 delivery date.

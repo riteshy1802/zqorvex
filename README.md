@@ -39,7 +39,16 @@ docker compose down
 
 ---
 
-### Option 2: Local Development
+### Option 2: Vercel Monorepo (Services)
+
+Both frontend and backend deploy together in sync as a single Vercel project under one shared domain:
+- Monorepo services configured via root [`vercel.json`](file:///home/ritesh/Desktop/zqorvex/vercel.json).
+- Import the repository on Vercel (leave **Root Directory** as repository root).
+- Vercel automatically deploys both `frontend` (Vite) and `backend` (FastAPI), proxying `/dashboard`, `/health`, and `/docs` to FastAPI without CORS issues.
+
+---
+
+### Option 3: Local Development
 
 #### 1. Backend (FastAPI + Python 3.11+)
 
