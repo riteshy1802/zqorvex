@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --card-muted: #f1f5f9;
+  
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  
+  --primary: #0284c7;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+  
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-accent: #93c5fd;
+  
+  --chart-forecast: #0284c7;
+  --chart-actual: #0f172a;
+  --error-positive: #059669;
+  --error-negative: #e11d48;
+  
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: #080c14;
+  --foreground: #f8fafc;
+  
+  --card: #0f1523;
+  --card-foreground: #f8fafc;
+  --card-muted: #141c2e;
+  
+  --popover: #0f1523;
+  --popover-foreground: #f8fafc;
+  
+  --primary: #38bdf8;
+  --primary-foreground: #080c14;
+  
+  --secondary: #1a2333;
+  --secondary-foreground: #f8fafc;
+  
+  --muted: #141c2e;
+  --muted-foreground: #94a3b8;
+  
+  --border: #1e293d;
+  --border-strong: #2d3b55;
+  --border-accent: #1e3a5f;
+  
+  --chart-forecast: #38bdf8;
+  --chart-actual: #f8fafc;
+  --error-positive: #10b981;
+  --error-negative: #f43f5e;
+}
+
+@theme inline {
+  --font-sans: 'Geist Variable', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-muted: var(--card-muted);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-accent: var(--border-accent);
+  --color-chart-forecast: var(--chart-forecast);
+  --color-chart-actual: var(--chart-actual);
+  --color-error-positive: var(--error-positive);
+  --color-error-negative: var(--error-negative);
+  
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for modern terminal aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
