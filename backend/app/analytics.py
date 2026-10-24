@@ -107,7 +107,8 @@ def get_latest_forecasts_for_day(
     day_end: datetime,
 ) -> list[ForecastPoint]:
     """
-    Returns the latest available forecast published for each delivery period on the given day.
+    Returns the latest available forecast published prior to delivery for each period on the given day.
+    Filters out retrospective post-delivery stream records (publish_time <= start_time).
     """
     rows = db.execute(
         select(
@@ -118,6 +119,7 @@ def get_latest_forecasts_for_day(
         .where(
             WindForecast.start_time >= day_start,
             WindForecast.start_time < day_end,
+            WindForecast.publish_time <= WindForecast.start_time,
         )
         .order_by(WindForecast.start_time, WindForecast.publish_time.desc())
     ).all()
@@ -146,7 +148,8 @@ def get_forecast_evolution_for_target(
     target_start_time: datetime,
 ) -> list[ForecastPoint]:
     """
-    Returns all sequential forecast publication runs for a specific delivery period.
+    Returns all sequential forecast publication runs leading up to gate closure for a specific delivery period.
+    Filters out retrospective post-delivery records (publish_time <= target_start_time).
     """
     rows = db.execute(
         select(
@@ -154,7 +157,10 @@ def get_forecast_evolution_for_target(
             WindForecast.publish_time,
             WindForecast.generation,
         )
-        .where(WindForecast.start_time == target_start_time)
+        .where(
+            WindForecast.start_time == target_start_time,
+            WindForecast.publish_time <= target_start_time,
+        )
         .order_by(WindForecast.publish_time.asc())
     ).all()
 

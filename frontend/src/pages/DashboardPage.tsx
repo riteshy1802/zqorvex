@@ -12,7 +12,7 @@ import { AccuracyMetrics } from "../components/dashboard/AccuracyMetrics";
 import { AccuracyOverview } from "../components/dashboard/AccuracyOverview";
 import { DataQuality } from "../components/dashboard/DataQuality";
 import { useDashboard } from "../hooks/useDashboard";
-import { formatPublishDateTime } from "../lib/formatters";
+import { formatDayMonth } from "../lib/formatters";
 
 export const DashboardPage: React.FC = () => {
   // Default to January 14, 2026 as per specification
@@ -23,43 +23,52 @@ export const DashboardPage: React.FC = () => {
 
   // Compute derived statistics from live backend payload
   const {
-    latestPublishTime,
-    averageForecastMW,
-    peakForecastMW,
+    dayAheadPublishTime,
+    dayAheadAvgMW,
+    dayAheadPeakMW,
+    latestIntradayAvgMW,
     targetActualMW,
   } = useMemo(() => {
     if (!data) {
       return {
-        latestPublishTime: "",
-        averageForecastMW: 0,
-        peakForecastMW: 0,
+        dayAheadPublishTime: "",
+        dayAheadAvgMW: 0,
+        dayAheadPeakMW: 0,
+        latestIntradayAvgMW: 0,
         targetActualMW: undefined,
       };
     }
 
-    // Latest publish time across the day's forecast records
-    let maxPubDate = 0;
-    let maxPubStr = "";
-    let totalMW = 0;
-    let maxMW = 0;
+    // 1. Calculate Day-Ahead forecast stats (from forecast_vs_actual)
+    let daTotalMW = 0;
+    let daPeakMW = 0;
 
-    if (data.latest_forecast && data.latest_forecast.length > 0) {
-      data.latest_forecast.forEach((f) => {
-        const pubTime = new Date(f.publish_time).getTime();
-        if (pubTime > maxPubDate) {
-          maxPubDate = pubTime;
-          maxPubStr = f.publish_time;
-        }
-        totalMW += f.generation;
-        if (f.generation > maxMW) {
-          maxMW = f.generation;
+    if (data.forecast_vs_actual && data.forecast_vs_actual.length > 0) {
+      data.forecast_vs_actual.forEach((f) => {
+        daTotalMW += f.forecast;
+        if (f.forecast > daPeakMW) {
+          daPeakMW = f.forecast;
         }
       });
     }
 
-    const avgMW = data.latest_forecast.length > 0 ? totalMW / data.latest_forecast.length : 0;
+    const daAvgMW = data.forecast_vs_actual.length > 0 ? daTotalMW / data.forecast_vs_actual.length : 0;
 
-    // Find actual outturn for the target hour (14:00 UTC) for forecast evolution tracking
+    // Day-Ahead benchmark publication: D-1 15:30 UTC
+    const dMinusOne = new Date(selectedDate + "T00:00:00Z");
+    dMinusOne.setUTCDate(dMinusOne.getUTCDate() - 1);
+    const daPubTime = `${formatDayMonth(dMinusOne.toISOString())} 15:30 UTC (D-1)`;
+
+    // 2. Calculate Intraday latest available stats (from latest_forecast)
+    let intraTotalMW = 0;
+    if (data.latest_forecast && data.latest_forecast.length > 0) {
+      data.latest_forecast.forEach((f) => {
+        intraTotalMW += f.generation;
+      });
+    }
+    const intraAvgMW = data.latest_forecast.length > 0 ? intraTotalMW / data.latest_forecast.length : 0;
+
+    // 3. Find actual outturn for the target hour (14:00 UTC) for forecast evolution tracking
     let targetActual: number | undefined;
     if (data.forecast_evolution && data.forecast_evolution.length > 0 && data.forecast_vs_actual) {
       const evoTargetTime = data.forecast_evolution[0].start_time;
@@ -72,12 +81,13 @@ export const DashboardPage: React.FC = () => {
     }
 
     return {
-      latestPublishTime: maxPubStr ? formatPublishDateTime(maxPubStr) : "D-1 17:00 UTC",
-      averageForecastMW: Math.round(avgMW),
-      peakForecastMW: Math.round(maxMW),
+      dayAheadPublishTime: daPubTime,
+      dayAheadAvgMW: Math.round(daAvgMW),
+      dayAheadPeakMW: Math.round(daPeakMW),
+      latestIntradayAvgMW: Math.round(intraAvgMW),
       targetActualMW: targetActual,
     };
-  }, [data]);
+  }, [data, selectedDate]);
 
   const isInitialLoading = isLoading && !data;
 
@@ -120,15 +130,16 @@ export const DashboardPage: React.FC = () => {
               <HeroSection
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
-                latestPublishTime={latestPublishTime}
-                averageForecastMW={averageForecastMW}
-                peakForecastMW={peakForecastMW}
+                dayAheadPublishTime={dayAheadPublishTime}
+                dayAheadAvgMW={dayAheadAvgMW}
+                dayAheadPeakMW={dayAheadPeakMW}
+                latestIntradayAvgMW={latestIntradayAvgMW}
               />
 
               {/* Strategic KPI Strip */}
               <KpiGrid
-                averageForecastMW={averageForecastMW}
-                publishTime={latestPublishTime}
+                averageForecastMW={dayAheadAvgMW}
+                publishTime={dayAheadPublishTime}
                 maeMW={data?.metrics.mae || 0}
                 rmseMW={data?.metrics.rmse || 0}
                 biasMW={data?.metrics.bias || 0}

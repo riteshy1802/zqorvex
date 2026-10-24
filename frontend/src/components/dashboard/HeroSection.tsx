@@ -6,17 +6,19 @@ import { formatDisplayDate, formatGW } from "../../lib/formatters";
 interface HeroSectionProps {
   selectedDate: string;
   onSelectDate: (date: string) => void;
-  latestPublishTime: string;
-  averageForecastMW: number;
-  peakForecastMW: number;
+  dayAheadPublishTime: string;
+  dayAheadAvgMW: number;
+  dayAheadPeakMW: number;
+  latestIntradayAvgMW?: number;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   selectedDate,
   onSelectDate,
-  latestPublishTime,
-  averageForecastMW,
-  peakForecastMW,
+  dayAheadPublishTime,
+  dayAheadAvgMW,
+  dayAheadPeakMW,
+  latestIntradayAvgMW,
 }) => {
   return (
     <section id="overview" className="relative pt-10 pb-8 sm:pt-14 sm:pb-10 lg:pt-16 lg:pb-12 border-b border-border/60">
@@ -68,10 +70,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
           <div>
             <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-              Latest Forecast Published
+              Day-Ahead Published Gate
             </div>
             <div className="text-sm sm:text-base font-bold font-mono text-foreground">
-              {latestPublishTime || "Available"}
+              {dayAheadPublishTime || "D-1 17:00 UTC"}
             </div>
           </div>
         </div>
@@ -82,10 +84,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
           <div>
             <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-              Daily Forecast (Avg / Peak)
+              Day-Ahead Forecast (Avg / Peak)
             </div>
             <div className="text-sm sm:text-base font-bold font-mono text-foreground">
-              {formatGW(averageForecastMW, 2)} <span className="text-xs text-muted-foreground font-normal font-sans">/ {formatGW(peakForecastMW, 2)}</span>
+              {formatGW(dayAheadAvgMW, 2)} <span className="text-xs text-muted-foreground font-normal font-sans">/ {formatGW(dayAheadPeakMW, 2)}</span>
+              {latestIntradayAvgMW && (
+                <span className="block text-[10px] text-muted-foreground font-mono font-normal">
+                  Intraday pre-delivery: {formatGW(latestIntradayAvgMW, 2)}
+                </span>
+              )}
             </div>
           </div>
         </div>
