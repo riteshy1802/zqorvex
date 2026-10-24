@@ -125,7 +125,8 @@ npm run build
   - $\text{RMSE} = 2,434.74\text{ MW}$ ($2.43\text{ GW}$)
   - $\text{Bias} = +1,816.53\text{ MW}$ ($+1.82\text{ GW}$ over-forecasting tendency)
 
----
+## Note :
+FUELHH provides half-hourly actual generation, while WINDFOR provides hourly forecasts. Forecast accuracy is therefore evaluated at WINDFOR's native hourly delivery resolution using the corresponding FUELHH hourly actuals, without interpolation.
 
 ## 🤖 AI Disclosure & Engineering Process
 
