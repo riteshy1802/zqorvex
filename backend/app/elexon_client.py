@@ -1,16 +1,11 @@
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, timezone
 import httpx
-
 
 BASE_URL = "https://data.elexon.co.uk/bmrs/api/v1/datasets"
 
-# One-day chunks keep requests predictable.
-CHUNK_SIZE = timedelta(days=1)
-
 
 class ElexonClient:
-    def __init__(self, timeout: float = 30.0):
+    def __init__(self, timeout: float = 45.0):
         self.timeout = timeout
 
     def _fetch(
@@ -38,41 +33,33 @@ class ElexonClient:
         self,
         start: datetime,
         end: datetime,
+        chunk_days: int = 5,
     ) -> list[dict]:
+        """Fetch FUELHH records filtered to fuelType=WIND for the given date range."""
         records = []
 
-        current_start = start
+        last_date = (end - timedelta(days=1)).date() if end.date() > start.date() else start.date()
+        current_date = start.date()
 
         with httpx.Client(timeout=self.timeout) as client:
-            while current_start < end:
-                current_end = min(
-                    current_start + CHUNK_SIZE,
-                    end,
-                )
+            while current_date <= last_date:
+                chunk_end_date = min(current_date + timedelta(days=chunk_days - 1), last_date)
 
                 print(
-                    "Fetching FUELHH: "
-                    f"{current_start.isoformat()} → "
-                    f"{current_end.isoformat()}"
+                    f"Fetching FUELHH: {current_date.isoformat()} → {chunk_end_date.isoformat()}"
                 )
 
                 url = f"{BASE_URL}/FUELHH/stream"
-
                 params = {
-                    "settlementDateFrom": current_start.date().isoformat(),
-                    "settlementDateTo": current_end.date().isoformat(),
+                    "settlementDateFrom": current_date.isoformat(),
+                    "settlementDateTo": chunk_end_date.isoformat(),
                     "fuelType": "WIND",
                 }
 
-                chunk = self._fetch(
-                    client,
-                    url,
-                    params,
-                )
-
+                chunk = self._fetch(client, url, params)
                 records.extend(chunk)
 
-                current_start = current_end
+                current_date = chunk_end_date + timedelta(days=1)
 
         return records
 
@@ -80,43 +67,29 @@ class ElexonClient:
         self,
         start: datetime,
         end: datetime,
+        chunk_days: int = 5,
     ) -> list[dict]:
+        """Fetch WINDFOR records by publishDateTime window in chunks."""
         records = []
+        chunk_delta = timedelta(days=chunk_days)
 
         current_start = start
 
         with httpx.Client(timeout=self.timeout) as client:
             while current_start < end:
-                current_end = min(
-                    current_start + CHUNK_SIZE,
-                    end,
-                )
+                current_end = min(current_start + chunk_delta, end)
 
                 print(
-                    "Fetching WINDFOR: "
-                    f"{current_start.isoformat()} → "
-                    f"{current_end.isoformat()}"
+                    f"Fetching WINDFOR: {current_start.isoformat()} → {current_end.isoformat()}"
                 )
 
                 url = f"{BASE_URL}/WINDFOR/stream"
-
                 params = {
-                    "publishDateTimeFrom": (
-                        current_start.isoformat()
-                        .replace("+00:00", "Z")
-                    ),
-                    "publishDateTimeTo": (
-                        current_end.isoformat()
-                        .replace("+00:00", "Z")
-                    ),
+                    "publishDateTimeFrom": current_start.isoformat().replace("+00:00", "Z"),
+                    "publishDateTimeTo": current_end.isoformat().replace("+00:00", "Z"),
                 }
 
-                chunk = self._fetch(
-                    client,
-                    url,
-                    params,
-                )
-
+                chunk = self._fetch(client, url, params)
                 records.extend(chunk)
 
                 current_start = current_end
