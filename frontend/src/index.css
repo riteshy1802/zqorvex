@@ -5,58 +5,59 @@
 
 :root {
   --background: #f8fafc;
-  --foreground: #0f172a;
+  --foreground: #090d16;
   
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #090d16;
   --card-muted: #f1f5f9;
   
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #090d16;
   
   --primary: #0284c7;
   --primary-foreground: #ffffff;
   
   --secondary: #e2e8f0;
-  --secondary-foreground: #0f172a;
+  --secondary-foreground: #090d16;
   
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
-  --border-accent: #93c5fd;
+  --border-accent: #38bdf8;
   
   --chart-forecast: #0284c7;
-  --chart-actual: #0f172a;
+  --chart-actual: #090d16;
   --error-positive: #059669;
   --error-negative: #e11d48;
   
-  --radius: 0.5rem;
+  /* Near-sharp radius for institutional financial terminal look */
+  --radius: 2px;
 }
 
 .dark {
-  --background: #080c14;
-  --foreground: #f8fafc;
+  --background: #070a10;
+  --foreground: #f1f5f9;
   
-  --card: #0f1523;
-  --card-foreground: #f8fafc;
-  --card-muted: #141c2e;
+  --card: #0c101a;
+  --card-foreground: #f1f5f9;
+  --card-muted: #111726;
   
-  --popover: #0f1523;
-  --popover-foreground: #f8fafc;
+  --popover: #0c101a;
+  --popover-foreground: #f1f5f9;
   
   --primary: #38bdf8;
-  --primary-foreground: #080c14;
+  --primary-foreground: #070a10;
   
-  --secondary: #1a2333;
-  --secondary-foreground: #f8fafc;
+  --secondary: #151d2c;
+  --secondary-foreground: #f1f5f9;
   
-  --muted: #141c2e;
-  --muted-foreground: #94a3b8;
+  --muted: #111726;
+  --muted-foreground: #8493a8;
   
-  --border: #1e293d;
-  --border-strong: #2d3b55;
+  --border: #1a2233;
+  --border-strong: #27344d;
   --border-accent: #1e3a5f;
   
   --chart-forecast: #38bdf8;
@@ -90,14 +91,19 @@
   --color-error-positive: var(--error-positive);
   --color-error-negative: var(--error-negative);
   
-  --radius-sm: calc(var(--radius) * 0.75);
-  --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) * 1.5);
-  --radius-xl: calc(var(--radius) * 2);
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
 }
 
 * {
   border-color: var(--border);
+}
+
+button, [role="button"], a {
+  cursor: pointer;
 }
 
 html, body {
@@ -113,17 +119,17 @@ html, body {
   min-height: 100vh;
 }
 
-/* Custom scrollbar for modern terminal aesthetic */
+/* Institutional custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 3px;
+  border-radius: 1px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);

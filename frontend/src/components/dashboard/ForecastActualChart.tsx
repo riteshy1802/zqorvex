@@ -17,26 +17,27 @@ interface ForecastActualChartProps {
   isLoading?: boolean;
 }
 
+// Custom Tooltip component with institutional terminal sharpness
 const CustomChartTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data: HalfHourRecord = payload[0].payload;
     const isUnder = (data.errorMW ?? 0) > 0;
 
     return (
-      <div className="rounded-lg border border-border bg-card/95 p-3.5 shadow-xl backdrop-blur-md">
-        <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            {formatDisplayDate(data.targetDate)} · Period {data.period}
+      <div className="rounded-[2px] border border-border bg-card/98 p-3 shadow-2xl backdrop-blur-md">
+        <div className="flex items-center justify-between gap-6 border-b border-border/60 pb-1.5">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
+            {formatDisplayDate(data.targetDate)} • SP {data.period}
           </span>
           <span className="font-mono text-xs font-bold text-foreground">
             {data.startTime} UTC
           </span>
         </div>
 
-        <div className="mt-2.5 space-y-1.5 font-mono text-xs">
+        <div className="mt-2 space-y-1.5 font-mono text-xs">
           <div className="flex items-center justify-between gap-6">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="h-2 w-2 rounded-full bg-sky-400" />
+              <span className="h-1.5 w-1.5 rounded-[1px] bg-sky-400" />
               Forecast (WINDFOR):
             </span>
             <span className="font-semibold text-foreground">
@@ -46,7 +47,7 @@ const CustomChartTooltip = ({ active, payload }: any) => {
 
           <div className="flex items-center justify-between gap-6">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="h-2 w-2 rounded-full bg-slate-200 dark:bg-white" />
+              <span className="h-1.5 w-1.5 rounded-[1px] bg-slate-300 dark:bg-white" />
               Actual (FUELHH):
             </span>
             <span className="font-semibold text-foreground">
@@ -55,7 +56,7 @@ const CustomChartTooltip = ({ active, payload }: any) => {
           </div>
 
           <div className="flex items-center justify-between gap-6 border-t border-border/50 pt-1.5">
-            <span className="text-muted-foreground">Error (Actual − Forecast):</span>
+            <span className="text-muted-foreground">Error (Act − Fct):</span>
             <span
               className={`font-bold ${
                 isUnder ? "text-emerald-500" : "text-rose-500"
@@ -80,7 +81,7 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
 
   if (isLoading) {
     return (
-      <div className="h-[440px] w-full animate-pulse rounded-xl border border-border bg-card/60 p-6" />
+      <div className="h-[430px] w-full animate-pulse rounded-[2px] border border-border bg-card/60 p-6" />
     );
   }
 
@@ -92,42 +93,42 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
   const yDomainMax = Math.ceil((maxMW + 2000) / 5000) * 5000;
 
   return (
-    <section id="forecast" className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-sm">
+    <section id="forecast" className="rounded-[2px] border border-border bg-card p-4 sm:p-5 shadow-sm">
       {/* Chart Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/50 pb-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border/50 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold tracking-tight text-foreground sm:text-lg">
-              Forecast vs Actual
+            <h2 className="text-sm font-bold tracking-tight text-foreground sm:text-base font-mono">
+              Forecast vs Actual Outturn
             </h2>
-            <span className="rounded bg-primary/10 px-2 py-0.5 text-[10px] font-mono font-medium text-primary border border-primary/20">
-              30-min Settlement Periods
+            <span className="rounded-[2px] bg-muted/60 px-1.5 py-0.5 text-[9px] font-mono font-medium text-muted-foreground border border-border">
+              30-MIN SETTLEMENT PERIODS (SP 01 - 48)
             </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            National wind generation outturn compared with day-ahead and intraday Elexon forecasts.
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            National wind generation outturn (FUELHH) evaluated against latest available WINDFOR forecast.
           </p>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-5 text-xs font-medium">
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-sky-400 ring-2 ring-sky-400/20" />
+        <div className="flex items-center gap-5 text-xs font-mono font-medium">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-[1px] bg-sky-400" />
             <span className="text-muted-foreground">
-              Forecast <span className="font-mono text-[10px] text-muted-foreground/70">(WINDFOR)</span>
+              Forecast <span className="text-[10px] text-muted-foreground/70">(WINDFOR)</span>
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-slate-900 dark:bg-white ring-2 ring-white/20" />
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-[1px] bg-slate-900 dark:bg-white" />
             <span className="text-muted-foreground">
-              Actual <span className="font-mono text-[10px] text-muted-foreground/70">(FUELHH)</span>
+              Actual <span className="text-[10px] text-muted-foreground/70">(FUELHH)</span>
             </span>
           </div>
         </div>
       </div>
 
       {/* Main Chart Graphic */}
-      <div className="mt-6 h-[380px] w-full">
+      <div className="mt-5 h-[370px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={records}
@@ -154,7 +155,7 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
             </defs>
 
             <CartesianGrid
-              strokeDasharray="3 3"
+              strokeDasharray="2 2"
               vertical={false}
               stroke="var(--border)"
               strokeOpacity={0.6}
@@ -165,7 +166,7 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
               interval={5} // Every 3 hours (6 periods)
               tickLine={false}
               axisLine={{ stroke: "var(--border)" }}
-              tick={{ fill: "var(--color-muted-foreground)", fontSize: 11, fontFamily: "var(--font-mono)" }}
+              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10, fontFamily: "var(--font-mono)" }}
               tickFormatter={(val: any) => `${val}`}
             />
 
@@ -173,7 +174,7 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
               domain={[0, yDomainMax]}
               tickLine={false}
               axisLine={false}
-              tick={{ fill: "var(--color-muted-foreground)", fontSize: 11, fontFamily: "var(--font-mono)" }}
+              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10, fontFamily: "var(--font-mono)" }}
               tickFormatter={(val: any) => `${(Number(val) / 1000).toFixed(0)} GW`}
             />
 
@@ -182,7 +183,7 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
               cursor={{
                 stroke: "var(--border-strong)",
                 strokeWidth: 1,
-                strokeDasharray: "4 4",
+                strokeDasharray: "2 2",
               }}
             />
 
@@ -191,10 +192,10 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
               type="monotone"
               dataKey="forecastMW"
               stroke="#38bdf8"
-              strokeWidth={2}
+              strokeWidth={1.75}
               fill="url(#forecastFill)"
               isAnimationActive={true}
-              animationDuration={400}
+              animationDuration={300}
             />
 
             {/* Actual Line / Area */}
@@ -202,24 +203,24 @@ export const ForecastActualChart: React.FC<ForecastActualChartProps> = ({
               type="monotone"
               dataKey="actualMW"
               stroke="var(--color-chart-actual)"
-              strokeWidth={2}
+              strokeWidth={1.75}
               fill="url(#actualFill)"
               isAnimationActive={true}
-              animationDuration={400}
+              animationDuration={300}
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
       {/* Settlement Period Status Bar */}
-      <div className="mt-4 flex flex-wrap items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
-        <div className="flex items-center gap-4">
-          <span>Resolution: <span className="font-mono text-foreground">30 min (48 settlement periods)</span></span>
-          <span className="hidden sm:inline">•</span>
-          <span className="hidden sm:inline">Coverage: <span className="font-mono text-foreground">100% of National Grid</span></span>
+      <div className="mt-3 flex flex-wrap items-center justify-between border-t border-border/50 pt-2.5 text-[10px] font-mono text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <span>Resolution: <span className="text-foreground">30 min (48 SPs)</span></span>
+          <span>•</span>
+          <span>GB National Transmission System</span>
         </div>
-        <div className="font-mono">
-          {hoveredPeriod ? `Hovering Settlement Period ${hoveredPeriod} of 48` : `Selected: ${formatDisplayDate(selectedDate)}`}
+        <div>
+          {hoveredPeriod ? `Period ${hoveredPeriod.toString().padStart(2, "0")} / 48` : `Date: ${formatDisplayDate(selectedDate)}`}
         </div>
       </div>
     </section>

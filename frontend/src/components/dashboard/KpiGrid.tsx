@@ -22,11 +22,11 @@ export const KpiGrid: React.FC<KpiGridProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="h-32 animate-pulse rounded-xl border border-border bg-card/60 p-5"
+            className="h-28 animate-pulse rounded-[2px] border border-border bg-card/60 p-4"
           />
         ))}
       </div>
@@ -38,14 +38,14 @@ export const KpiGrid: React.FC<KpiGridProps> = ({
   const biasTrend = isUnder ? "positive" : biasGW < 0 ? "negative" : "neutral";
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {/* KPI 1: Latest Forecast */}
       <KpiCard
         label="Latest Forecast"
         value={`${latestForecastGW.toFixed(1)} GW`}
         subValue="Latest available forecast"
         contextTag={`Pub: ${publishTime}`}
-        icon={<Wind className="h-4 w-4" />}
+        icon={<Wind className="h-3.5 w-3.5" />}
       />
 
       {/* KPI 2: MAE */}
@@ -53,8 +53,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({
         label="MAE (Mean Absolute Error)"
         value={`${maeGW.toFixed(2)} GW`}
         subValue="January 2026"
-        contextTag="Delivery day"
-        icon={<Activity className="h-4 w-4" />}
+        contextTag="Delivery Day"
+        icon={<Activity className="h-3.5 w-3.5" />}
       />
 
       {/* KPI 3: RMSE */}
@@ -62,8 +62,8 @@ export const KpiGrid: React.FC<KpiGridProps> = ({
         label="RMSE (Root Mean Square)"
         value={`${rmseGW.toFixed(2)} GW`}
         subValue="January 2026"
-        contextTag="Penalizes outliers"
-        icon={<Gauge className="h-4 w-4" />}
+        contextTag="Quadratic Penalty"
+        icon={<Gauge className="h-3.5 w-3.5" />}
       />
 
       {/* KPI 4: Forecast Bias */}
@@ -73,7 +73,7 @@ export const KpiGrid: React.FC<KpiGridProps> = ({
         subValue="Actual − Forecast"
         trend={biasTrend}
         trendText={biasLabel}
-        icon={<TrendingUp className="h-4 w-4" />}
+        icon={<TrendingUp className="h-3.5 w-3.5" />}
       />
     </div>
   );

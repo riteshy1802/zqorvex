@@ -42,27 +42,27 @@ export const DashboardPage: React.FC = () => {
       <main className="flex-1">
         <PageContainer>
           {hasError ? (
-            <div className="my-16 flex flex-col items-center justify-center rounded-2xl border border-destructive/30 bg-destructive/5 p-10 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertCircle className="h-6 w-6" />
+            <div className="my-16 flex flex-col items-center justify-center rounded-[2px] border border-destructive/30 bg-destructive/5 p-10 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-[2px] bg-destructive/10 text-destructive border border-destructive/20">
+                <AlertCircle className="h-5 w-5" />
               </div>
-              <h2 className="mt-4 text-lg font-bold text-foreground">
+              <h2 className="mt-4 text-base font-bold text-foreground font-mono">
                 Unable to load Elexon data
               </h2>
-              <p className="mt-2 max-w-md text-xs text-muted-foreground">
+              <p className="mt-1.5 max-w-md text-xs text-muted-foreground">
                 {forecastError || metricsError || "We couldn't retrieve the requested forecast data for this period."}
               </p>
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="mt-6 flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+                className="mt-5 flex items-center gap-2 rounded-[2px] bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer font-mono"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Retry connection
               </button>
             </div>
           ) : (
-            <div className="space-y-8">
+            <div className="space-y-10 sm:space-y-12 pb-16">
               {/* Hero & Date Controls */}
               <HeroSection
                 selectedDate={selectedDate}

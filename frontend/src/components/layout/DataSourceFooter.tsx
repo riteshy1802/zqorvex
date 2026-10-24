@@ -24,7 +24,7 @@ export const DataSourceFooter: React.FC = () => {
             href="https://www.elexon.co.uk/bmrs-insights-solution/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+            className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
           >
             <span>Elexon Insights Solution</span>
             <ExternalLink className="h-3 w-3" />
