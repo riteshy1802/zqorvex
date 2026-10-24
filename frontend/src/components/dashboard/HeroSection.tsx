@@ -1,20 +1,22 @@
 import React from "react";
 import { Clock, Radio, Zap } from "lucide-react";
 import { DeliverySelector } from "./DeliverySelector";
-import { formatDisplayDate } from "../../lib/formatters";
+import { formatDisplayDate, formatGW } from "../../lib/formatters";
 
 interface HeroSectionProps {
   selectedDate: string;
   onSelectDate: (date: string) => void;
   latestPublishTime: string;
-  latestForecastGW: number;
+  averageForecastMW: number;
+  peakForecastMW: number;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   selectedDate,
   onSelectDate,
   latestPublishTime,
-  latestForecastGW,
+  averageForecastMW,
+  peakForecastMW,
 }) => {
   return (
     <section id="overview" className="relative pt-10 pb-8 sm:pt-14 sm:pb-10 lg:pt-16 lg:pb-12 border-b border-border/60">
@@ -31,7 +33,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </h1>
 
           <p className="text-xs text-muted-foreground sm:text-sm leading-relaxed max-w-xl">
-            Evaluate latest national wind generation forecasts against Elexon settlement actuals. Quantify historical bias and forecast evolution across January 2026 delivery windows.
+            Decision-support dashboard for UK electricity trading. Monitor latest national wind forecasts against Elexon settlement actuals, track forecast run convergence, and evaluate quantitative bias across January 2026.
           </p>
         </div>
 
@@ -69,7 +71,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               Latest Forecast Published
             </div>
             <div className="text-sm sm:text-base font-bold font-mono text-foreground">
-              {latestPublishTime}
+              {latestPublishTime || "Available"}
             </div>
           </div>
         </div>
@@ -80,10 +82,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
           <div>
             <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-              Latest Forecast Volume
+              Daily Forecast (Avg / Peak)
             </div>
             <div className="text-sm sm:text-base font-bold font-mono text-foreground">
-              {latestForecastGW.toFixed(1)} GW
+              {formatGW(averageForecastMW, 2)} <span className="text-xs text-muted-foreground font-normal font-sans">/ {formatGW(peakForecastMW, 2)}</span>
             </div>
           </div>
         </div>

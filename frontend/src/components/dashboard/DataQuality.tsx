@@ -1,9 +1,9 @@
 import React from "react";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
-import { DataQualityStats } from "../../types/forecast";
+import { DataQuality as DataQualityType } from "../../types/dashboard";
 
 interface DataQualityProps {
-  stats: DataQualityStats | null;
+  stats: DataQualityType | null;
   isLoading?: boolean;
 }
 
@@ -17,7 +17,9 @@ export const DataQuality: React.FC<DataQualityProps> = ({
     );
   }
 
-  const completeness = ((stats.matchedPeriods / stats.totalPeriods) * 100).toFixed(1);
+  // 744 native hourly delivery windows in a 31-day month
+  const totalHourlyPeriods = 31 * 24; // 744
+  const completeness = ((stats.matched_records / totalHourlyPeriods) * 100).toFixed(1);
 
   return (
     <section id="data-quality" className="rounded-[2px] border border-border bg-card p-4 sm:p-5 shadow-sm">
@@ -39,10 +41,10 @@ export const DataQuality: React.FC<DataQualityProps> = ({
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
         <div className="space-y-0.5">
           <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-            Source
+            Data Source
           </span>
           <div className="font-mono text-xs font-semibold text-foreground">
-            {stats.source}
+            Elexon BMRS
           </div>
         </div>
 
@@ -51,7 +53,7 @@ export const DataQuality: React.FC<DataQualityProps> = ({
             Actuals Feed
           </span>
           <div className="font-mono text-xs font-semibold text-foreground">
-            {stats.actualsDataset.split(" ")[0]}
+            FUELHH Stream
           </div>
         </div>
 
@@ -60,16 +62,16 @@ export const DataQuality: React.FC<DataQualityProps> = ({
             Forecast Feed
           </span>
           <div className="font-mono text-xs font-semibold text-foreground">
-            {stats.forecastDataset.split(" ")[0]}
+            WINDFOR Stream
           </div>
         </div>
 
         <div className="space-y-0.5">
           <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-            Resolution
+            Eval Resolution
           </span>
           <div className="font-mono text-xs font-semibold text-foreground">
-            {stats.resolution.split(" ")[0]}
+            Hourly Native
           </div>
         </div>
 
@@ -78,7 +80,7 @@ export const DataQuality: React.FC<DataQualityProps> = ({
             Matched Periods
           </span>
           <div className="font-mono text-xs font-semibold text-emerald-500">
-            {stats.matchedPeriods.toLocaleString()} / {stats.totalPeriods.toLocaleString()}
+            {stats.matched_records.toLocaleString()} / {totalHourlyPeriods.toLocaleString()}
           </div>
         </div>
 
@@ -87,16 +89,16 @@ export const DataQuality: React.FC<DataQualityProps> = ({
             Missing Actuals
           </span>
           <div className="font-mono text-xs font-semibold text-foreground">
-            {stats.missingActuals}
+            {stats.missing_actuals}
           </div>
         </div>
 
         <div className="space-y-0.5">
           <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-            Missing Forecasts
+            Half-Hour Gaps
           </span>
-          <div className="font-mono text-xs font-semibold text-amber-500">
-            {stats.missingForecasts}
+          <div className="font-mono text-xs font-semibold text-amber-500" title="FUELHH :30 periods without WINDFOR counterpart">
+            {stats.missing_forecasts} (:30 native)
           </div>
         </div>
       </div>

@@ -1,23 +1,23 @@
 import React from "react";
-import { Activity, Gauge, TrendingUp, Wind } from "lucide-react";
+import { Activity, Gauge, TrendingDown, TrendingUp, Wind } from "lucide-react";
 import { KpiCard } from "./KpiCard";
-import { formatSignedGW } from "../../lib/formatters";
+import { formatGW, formatMW, formatSignedGW, formatSignedMW } from "../../lib/formatters";
 
 interface KpiGridProps {
-  latestForecastGW: number;
+  averageForecastMW: number;
   publishTime: string;
-  maeGW: number;
-  rmseGW: number;
-  biasGW: number;
+  maeMW: number;
+  rmseMW: number;
+  biasMW: number;
   isLoading?: boolean;
 }
 
 export const KpiGrid: React.FC<KpiGridProps> = ({
-  latestForecastGW,
+  averageForecastMW,
   publishTime,
-  maeGW,
-  rmseGW,
-  biasGW,
+  maeMW,
+  rmseMW,
+  biasMW,
   isLoading = false,
 }) => {
   if (isLoading) {
@@ -33,47 +33,51 @@ export const KpiGrid: React.FC<KpiGridProps> = ({
     );
   }
 
-  const isUnder = biasGW > 0;
-  const biasLabel = isUnder ? "Under-forecasting" : biasGW < 0 ? "Over-forecasting" : "Neutral";
-  const biasTrend = isUnder ? "positive" : biasGW < 0 ? "negative" : "neutral";
+  // Authoritative error definition: Error = Forecast - Actual
+  // Positive bias (> 0): Over-forecasting (Forecast > Actual)
+  // Negative bias (< 0): Under-forecasting (Forecast < Actual)
+  const isOver = biasMW > 0;
+  const isUnder = biasMW < 0;
+  const biasLabel = isOver ? "Over-forecasting" : isUnder ? "Under-forecasting" : "Unbiased";
+  const biasTrend = isOver ? "negative" : isUnder ? "positive" : "neutral";
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {/* KPI 1: Latest Forecast */}
+      {/* KPI 1: Latest Forecast Volume */}
       <KpiCard
-        label="Latest Forecast"
-        value={`${latestForecastGW.toFixed(1)} GW`}
-        subValue="Latest available forecast"
-        contextTag={`Pub: ${publishTime}`}
+        label="Day-Ahead Forecast Avg"
+        value={formatGW(averageForecastMW, 2)}
+        subValue={`${formatMW(averageForecastMW)} avg national`}
+        contextTag={`Pub: ${publishTime || "D-1 17:00"}`}
         icon={<Wind className="h-3.5 w-3.5" />}
       />
 
       {/* KPI 2: MAE */}
       <KpiCard
         label="MAE (Mean Absolute Error)"
-        value={`${maeGW.toFixed(2)} GW`}
-        subValue="January 2026"
-        contextTag="Delivery Day"
+        value={formatGW(maeMW, 2)}
+        subValue={`${formatMW(maeMW)} mean magnitude`}
+        contextTag="January 2026"
         icon={<Activity className="h-3.5 w-3.5" />}
       />
 
       {/* KPI 3: RMSE */}
       <KpiCard
         label="RMSE (Root Mean Square)"
-        value={`${rmseGW.toFixed(2)} GW`}
-        subValue="January 2026"
-        contextTag="Quadratic Penalty"
+        value={formatGW(rmseMW, 2)}
+        subValue={`${formatMW(rmseMW)} outlier penalty`}
+        contextTag="Quadratic"
         icon={<Gauge className="h-3.5 w-3.5" />}
       />
 
       {/* KPI 4: Forecast Bias */}
       <KpiCard
         label="Forecast Bias"
-        value={formatSignedGW(biasGW, 2)}
-        subValue="Actual − Forecast"
+        value={formatSignedGW(biasMW / 1000, 2)}
+        subValue={`${formatSignedMW(biasMW)} (Fct − Act)`}
         trend={biasTrend}
         trendText={biasLabel}
-        icon={<TrendingUp className="h-3.5 w-3.5" />}
+        icon={isOver ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
       />
     </div>
   );
